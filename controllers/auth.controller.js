@@ -16,7 +16,7 @@ const  crearUsuario =async (req, resp = response)=>{
         if(usuario){
             return resp.status(404).json({
                 ok: false,
-                mfg: 'EL usuario ya existe con ese email'
+                msg: 'EL usuario ya existe con ese email'
             });
         }
 
@@ -38,7 +38,8 @@ const  crearUsuario =async (req, resp = response)=>{
             ok: true,
             uid: dbUser.id,
             name,
-            token
+            token,
+            email
         });
         
     } catch (error) {
@@ -82,7 +83,8 @@ const loginUsuario =  async (req, resp = response)=>{
             ok: true,
             uid: usuarioDB.id,
             name: usuarioDB.name,
-            token
+            token,
+            email
         })
         
     } catch (error) {
@@ -97,11 +99,13 @@ const loginUsuario =  async (req, resp = response)=>{
 const revalidarToken = async (req = request, resp = response)=>{
     const { uid ,name } = req;
     const token = await generarJWT(uid,name);
+    const user = await Usuario.findById(uid);
     return resp.json({
         ok: true,
         uid,
         name,
-        token
+        token,
+        email: user.email
     });
 }
 
